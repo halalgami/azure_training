@@ -1,10 +1,12 @@
+# AZ 900 Study Guide
 
-Cloud computing is
+# CLOUD CONCEPTS
+
+## Cloud computing
 - rent vs. purchase
 - pay as you go
 - shared responsibility model
 
-# CLOUD CONCEPTS
 ## Core Cloud Services
 - Compute
 - Network
