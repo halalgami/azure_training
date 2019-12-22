@@ -374,6 +374,341 @@ Runs on dedicated azure VMs
 
 ## Containers
 
+### What are containers?
+- Standardized packages for software and their depdencies
+- A way to isolate apps from each other
+- Works on Linux and Windows
+- Allows separate apps to share the same OS kernel
+
+#### Reasons behind popularity
+- Monolithic app issues
+  - Minor code changes required full recompile and testing
+  - Application becomes a single point of failure
+  - Application becomes difficult and often expensive to scale
+
+#### Solution to the above is the following
+- Microservices: break an application to separate services
+- 12 Factor apps: make the app independently scalable, stateless, highly available by design
+
+### Monolithic vs. Microservices
+| Monolithic | Microservices |
+| ----------- | ----------- |
+| Simple deployments | Partial deploymens |
+| Inter-module refactoring | Strong module boundaries |
+| Vertical scaling | Horizontal scaling |
+| Technology mono-culture | Technology diversity |
+
+### Keys to microservices
+- Functional decomposition (decompose the app into separate services)
+- Horizontal scale (scale what you need, not what you don't and what scaling options)
+- Data decoupling (pick the best DB for each service)
+
 ## Serverless computing
 
-## Comparing compute options
+- Abstraction of server infrastructure and operating system
+- Fully managed services
+- Only pay for what you use
+- Flexibility to scale as needed
+- Stitch together applications and services seemlessly
+
+### Azure serverless computing services
+- Azure functions
+  - Support for C#,F#,Javascript, Java
+  - Pay per use pricing
+    - Consumption plan
+    - App service plan (run on the same plan as other services)
+  - Integrated security using OAuth providers
+  - Code in the portal or deploy via DevOps tools
+- Logic apps
+  - Workflow engine
+  - Orchestrate and stitch together functions and services
+  - Visualize, design, build, automate
+  - Key concept of trigger -> action
+- Event grid
+
+
+### Comparing compute options
+
+![Cloud Compute options](https://s3.amazonaws.com/algamthe.dev/images/ComparisonCompute.png "Cloud Compute options")
+
+# AZURE CORE SERVICES: NETWORKING
+
+![Networking Overview](https://s3.amazonaws.com/algamthe.dev/images/NetOverview.png "Networking Overview")
+
+[Read more about VNets](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview)
+
+
+## Azure Virtual Network
+
+![Azure Virtual Network](https://s3.amazonaws.com/algamthe.dev/images/VNetExample.png "Azure Virtual Network")
+
+**Capabilities**
+- Isolation
+- Internet access
+- Can contain multiple Azure resources (VMs and other cloud services)
+- VNet connectivity
+- OnPrem connectivity
+- Traffic filtering
+- Routing
+
+**Key Points**
+- Primary building block for Azure networking
+- Private network in azure based on address space prefix
+- Create subnets in your VNet with your IP ranges
+- Bring your own DNS or use Azure-provided DNS
+- Choose to connect the network to onPrem or the Internet
+
+*Note: look at the demo again and study the script/automation of deploying a VNet*
+
+## Hybrid connectivity options
+
+### Site-to-Site (S2S)
+![Site-to-Site](https://s3.amazonaws.com/algamthe.dev/images/Site2SiteOverview.png "Site-to-Site")
+- S2S VPN gateway connection is a connection over IPSec/IKE (IKEv1 or v2) VPN tunnel
+- Requires a VPN device in an enterprise datacenter that has a public IP address assigned to it
+- Must **not** be located behind a NAT
+- S2S connections can be used for cross-premises and hybrid configuratoins  
+
+### Point-to-Site (P2P)
+![Point-to-Site](https://s3.amazonaws.com/algamthe.dev/images/Point2Site.png "Point-to-Site")
+- Secure connection from an individual computer. Greate for remote workers.
+- No need for VPN device or public IP. Connect whereever user has Internet connection
+- Supports OSes: Win 7,8,8.1 (32/64bit),10. Win Server 2008 R2,2012,2012 R2 64 bit
+- Throughput up to 100Mbps (depending on Internet)
+- Doesn't scale easily, so only useful for few workstations
+
+#### VPN Gateway SKUs
+| SKU | S2S/VNet-to-VNet tunnels | P2S connections | Aggregate throughput benchmark
+| ----------- | ----------- | ----------- | ----------- |
+| VpnGw1 | Max. 30 | Max. 128 | 650Mbps |
+| VpnGw2 | Max. 30 | Max. 128 | 1Gbps |
+| VpnGw3 | Max. 30 | Max. 128 | 1.25Gbps |
+| Basic | Max. 10 | Max. 128 | 100Mbps |
+
+#### VPN Gateway Recommendations
+|Workload | SKUs |
+| ----------- | ----------- |
+| Production, critical workload | VpnGw1,VpnGw2,VpnGw3 |
+| Dev-test or proof of concept| Basic |
+
+
+|SKU | Features |
+| ----------- | ----------- |
+| Basic | **Route-based VPN**: 10 tunnels with P2S;<br>no RADIUS auth for P2S;<br>no IKEv2 for P2S<br>**Policy-based VPN**: (IKEv1): 1 tunnel no P2S |
+| VpnGw1,VpnGw2,VpnGw3 | **Route-based VPN**: up to 30 tunnels(*),P2S,<br>BGP,active-active, custom IPSec/IKE policy<br>ExpressRoute/VPN co-exsitence |
+
+[More about VPN gateways here](https://docs.microsoft.com/en-us/azure/vpn-gateway/vpn-gateway-about-vpngateways)
+
+### ExpressRoute
+![ExpressRoute](https://docs.microsoft.com/en-us/azure/expressroute/media/expressroute-introduction/expressroute-connection-overview.png "ExpressRoute")
+
+[More about ExpressRoute here](https://docs.microsoft.com/en-us/azure/expressroute/expressroute-introduction)
+
+![ExpressRoute connectivity models](https://docs.microsoft.com/en-us/azure/expressroute/media/expressroute-connectivity-models/expressroute-connectivity-models-diagram.png "ExpressRoute connectivity models")
+
+[More about ExpressRoute connectivity models](https://docs.microsoft.com/en-us/azure/expressroute/expressroute-connectivity-models)
+
+#### Benefits of ExpressRoute
+- Layer 3 connectivity: between your onPrem and Microsoft through a connectivity provider.<br>Can be from any-to-any (IPVPN) network, point-to-point Ethernet connection,<br> or through a virtual cross-connection via an Ethernet exchange.
+- Connectivity in all regions in a given geopolitical region towards Microsoft cloud.
+- Global connectivity towards Microsoft cloud with the premium add-on
+- Dynamic routing between your network and Microsoft over industry standard protocols (BGP)
+- Built-in redunduncy in every peering location for higher reliability.
+
+#### Provisioning ExpressRoute
+![ExpressRoute Provisioning workflow](https://docs.microsoft.com/en-us/azure/expressroute/media/expressroute-workflows/expressroute-circuit-workflow.png "ExpressRoute Provisioning workflow")
+
+[More about ExpressRoute workflow](https://docs.microsoft.com/en-us/azure/expressroute/expressroute-workflows)
+
+Make sure you have the following pieces of information
+![Required information for ExpressRoute Provisioning workflow](https://docs.microsoft.com/en-us/azure/expressroute/media/expressroute-workflows/routing-workflow.png "Required information for ExpressRoute Provisioning workflow")
+
+#### Unlimited vs. Metered
+|Unlimited | Metered |
+| ----------- | ----------- |
+| Speeds from 50Mbps to 10Gbps | Speeds from 50Mbps to 10Gbps |
+| Unlimited **inbound** data transfer | Unlimited **inbound** data transfer |
+| Unlimited **outbound** data transfer| Outbound data transfer charged at rate/Gb |
+| Higher monthly fee | Lower monthly fee |
+
+#### Express considerations
+- Understand the models
+  - Differences between unlimited and metered data
+  - Understand what model to use to accelerate adoption
+  - Understand differences in available port speeds, locations and approach
+  - Understand the limits that drive additional circuits
+
+- Understand the providers
+  - Each offer a different experience based on ecosystem and capabilities
+  - Some provide complete solutions and management
+- Understand the costs
+  - Connection costs can be broken out by the service connection costs (Azure)<br>and the authorized carrier costs(telco partner).
+  - Unlike other azure services, look beyond the pricing calculator.
+
+## Azure Load Balancers
+
+### Load balancer 
+Most common, works at the transport layer/layer 4.<br>Provides network level distribution to resources located in the same datacenter.
+- Layer 4 
+- Basic and Standard (preview) SKUs <-- review any SKUs
+- Service monitoring (allows to probe the health of VM behind it)
+- Automatic reconfiguration (i.e. when adding new webserver instances)
+- Hash based distribution. This is how it distributes its traffic.<br>Has a 5 tuple hash of the following
+  - Source IP
+  - Source Port
+  - Destination IP
+  - Destination Port
+  - Protocol Type
+  Also has session stickiness
+- Internal (e.g. infront of 2 DB instances), Public (e.g. infront of webservers) and multi-tier (mix of internal and public) options.
+### Application gateway
+workks at layer 7/app layer. Also acts as a reverse proxy
+- Layer 7 load balancer
+- Cookie based session affinity
+- SSL offload
+- End2End SSL (terminate SSL at the app gateway, apply routing rules to the traffic, then re-encrypting it again)
+- WAF
+- URL based content routing
+- Requires its own subnet before you deploy it
+  
+**App gateway sizes (approximate)**
+
+|Page response | Small | Medium | Large |
+| ----------- |----------- | ----------- |----------- |
+| 6K | 7.5Mbps | 13Mbps | 50Mbps |
+| 100K | 35Mbps | 100Mbps | 200Mbps |
+  
+### Traffic manager (global scale, globally available end points. works at the DNS level)
+
+### Comparison
+|Service | Azure load balancer | App gateway | Traffic manager |
+| ----------- | ----------- | ----------- | ----------- |
+| Technology | Transport layer (layer 4) | Application layer (layer 7) | DNS-level |
+| Application Protocols<br>Supported| Any | HTTP(s) and websockets | Any (HTTP endpoint is needed for endpoint monitoring)|
+| Endpoints | Azure VMs, cloud service<br>role instances | Any Azure internal IP address,<br>public IP address<br>Azure VM,<br>or Azure cloud service | Azure VMs, cloud services,<br>Azure web apps, external endpoints |
+| VNet | Can be used for both Internet<br> and internal (VNet) apps | Can be used for both Internet<br> and internal (VNet) apps | Only supports Internet facing apps |
+| Endpoint monitoring | via probes | via probes | via HTTP(s) GET |
+
+## CDN
+A content delivery network (CDN) is a distributed network of servers that can efficiently deliver web content to users. CDNs store cached content on edge servers in point-of-presence (POP) locations that are close to end users, to minimize latency.
+
+[More about Azure CDN](https://docs.microsoft.com/en-us/azure/cdn/cdn-overview)
+
+### Offerings
+- Standard Akamai
+- Standard Verizon
+- Premium Verizon
+
+![CDN Offerings](https://s3.amazonaws.com/algamthe.dev/images/AzureCDNOfferings.png "CDN Offerings")
+
+### Features
+- Dynamic site acceleration
+- CDN caching rules
+- HTTPS custom domain support
+- Azure diagnostic logs
+- File compression
+- Geo-filtering
+- Video streaming optimization
+- Large file optimization
+- URL redirect/rewrite
+- Mobile device rules
+
+[MUST READ CDN FEATURES](https://docs.microsoft.com/en-us/azure/cdn/cdn-features)
+
+### Benefits
+- Better performance and improved user experience for end users, especially when using applications in which multiple round-trips are required to load content.
+- Large scaling to better handle instantaneous high loads, such as the start of a product launch event.
+- Distribution of user requests and serving of content directly from edge servers so that less traffic is sent to the origin server.
+
+### How does it work?
+
+- A user (Alice) requests a file (also called an asset) by using a URL with a special domain name, such as <endpointname>.azureedge.net. This name can be an endpoint hostname or a custom domain. The DNS routes the request to the best performing POP location, which is usually the POP that is geographically closest to the user.
+
+- If no edge servers in the POP have the file in their cache, the POP requests the file from the origin server. The origin server can be an Azure Web App, Azure Cloud Service, Azure Storage account, or any publicly accessible web server.
+
+- The origin server returns the file to an edge server in the POP.
+
+- An edge server in the POP caches the file and returns the file to the original requestor (Alice). The file remains cached on the edge server in the POP until the time-to-live (TTL) specified by its HTTP headers expires. If the origin server didn't specify a TTL, the default TTL is seven days.
+
+- Additional users can then request the same file by using the same URL that Alice used, and can also be directed to the same POP.
+
+- If the TTL for the file hasn't expired, the POP edge server returns the file directly from the cache. This process results in a faster, more responsive user experience.
+
+### Limitations
+- The number of CDN profiles that can be created.
+- The number of endpoints that can be created in a CDN profile.
+- The number of custom domains that can be mapped to an endpoint.
+
+# AZURE CORE SERVICES: DATA AND STORAGE SERVICES
+
+## Types of Data
+
+### Structured Data
+- Adheres to a schema
+- All the data has the same field or properties
+- Stored in a database table with rows and columns
+- Relies on keys to indicate how one row<br>in a table relates to another row in another table
+- Referred to as relational data
+
+### Semi Structured Data
+- Doesn't fit into tables/rows/columns
+- Uses tags/keys to organize and provide a heirarchy
+- Referred to as NoSQL or non-relational data
+
+### Unstructure Data
+- No designated structure
+- No restrictions on what type of data it can hold
+- Example, blob can hold PDF/JPEG/JSON/Videos/etc
+- Enterprises struggling to manage and gain insight<br>from this data
+
+
+## Azure SQL
+- Relational DB as a service
+- Latest stable version of MSSQL
+- Either create new or migrate using<br>
+Microsoft Data Migration Assistant
+
+### Features
+- Predictable performance: Measure in Database Throughput Units (DTU)
+- High compatibility: Supports existing SQL clients<br>via tubular database stream (TDS) endpoint
+- Simplified Management: Icludes SQL server specific Azure tools
+  
+### Database tiers
+|Basic | Standard | Premium |
+| ----------- | ----------- | ----------- |
+| Small DB with<br>single concurrent user| Medium sized DB that<br>must support multi-concurrent<br>connections | Large DB that must<br>a large number of concurrent<br>connections & operations |
+| - Small DBs<br>- Single active operation<br>- Dev/Test<br>- Small scale apps<br>- 5 DTU| - Good for cloud apps<br>- Multiple operations<br>- Workgroup or web apps<br>- 10-100 DTU | - High txn volumes<br>- Large number of users<br>- Multiple operations<br>- Mission critical apps<br>- 100-800 DTU |
+
+### NEW - Managed Azure SQL Instances
+- Managed SQL servers
+- More compatible with legacy workloads
+
+### 3rd party DBs - Managed (MySQL/PostgreSQL)
+- Managed DB options
+  - built-in HA (no additional cost)
+  - Predictable performance
+  - Pay as you go
+  - Auto scaling
+  - Encryption (in motion/at rest)
+  - Auto backups with point in time restore (upto 35 days)
+  - Enterprise grade security and compliance
+
+### 3rd party DBs - NON Managed (ClearDB/etc)
+- Non managed options
+  - Win Azure VM hosting MySQL
+  - Linux Azure VM hosting MySQL
+  - ClearDB offering managed MySQL instance
+
+## Cosmos DB
+
+## Azure Storage
+
+## VM Disk Storage
+
+# AZURE CORE SERVICES: OTHER SERVICES
+
+
+# IDENTITY
+
+
+# COMPLIANCE, SECURITY AND COST
