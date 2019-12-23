@@ -1,13 +1,21 @@
-# AZ 900 Study Guide
+**AZ 900 Study Guide**
+
+1. [CLOUD CONCEPTS](#cloud-concepts)
+   1. [Cloud computing](#cloud-computing)
+   2. [Core Cloud Services](#core-cloud-services)
+   3. [Elasticity](#elasticity)
+   4. [Scalability](#scalability)
 
 # CLOUD CONCEPTS
 
 ## Cloud computing
+
 - rent vs. purchase
 - pay as you go
 - shared responsibility model
 
 ## Core Cloud Services
+
 - Compute
 - Network
 - Storage
@@ -174,6 +182,7 @@ Either used as a development framework (e.g. Azure App services, Pivotal Cloud F
 |  |  |
 
 # AZURE CORE SERVICES
+
 ## Azure Cloud Services Overview
 
 ![Azure Cloud Services Overview](https://s3.amazonaws.com/algamthe.dev/images/AzureServicesOverview.png "Azure Cloud Services Overview")
@@ -683,7 +692,7 @@ Microsoft Data Migration Assistant
 - Managed SQL servers
 - More compatible with legacy workloads
 
-### 3rd party DBs - Managed (MySQL/PostgreSQL)
+### rd party DBs - Managed (MySQL/PostgreSQL)
 - Managed DB options
   - built-in HA (no additional cost)
   - Predictable performance
@@ -693,22 +702,296 @@ Microsoft Data Migration Assistant
   - Auto backups with point in time restore (upto 35 days)
   - Enterprise grade security and compliance
 
-### 3rd party DBs - NON Managed (ClearDB/etc)
+### rd party DBs - NON Managed (ClearDB/etc)
 - Non managed options
   - Win Azure VM hosting MySQL
   - Linux Azure VM hosting MySQL
   - ClearDB offering managed MySQL instance
 
 ## Cosmos DB
+- Globally distributed database service
+- Supports schema-less data
+- Used to build highly available responsive<br>always-on apps with constantly changing data
+
+**Example**
+Devs frequently updating catalog ---> online course catalog ---> Cosmos DB <--- Global users
+
+[More on Azure Cosmos DB here](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction)
+
+### Azure Cosmos DB topology
+
+![Azure Cosmos DB Topology](https://docs.microsoft.com/en-us/azure/cosmos-db/media/distribute-data-globally/deployment-topology.png "Azure Cosmos DB Topolgy")
+
+[More on Azure Cosmos DB topology](https://docs.microsoft.com/en-us/azure/cosmos-db/distribute-data-globally)
+
+### Azure Cosmos DB features
+
+Can access via following APIs
+
+- Document DB (SQL) API
+- MongoDB API
+- Graph (Gremplin) API
+- Tables (Key/Value) API
+
+Automatically partitioned for
+- Performance
+- Storage capacity
+
+**MUST READ MORE**
 
 ## Azure Storage
+### Azure blob storage
+- Unstructured storage for storing objects
+- Store images/videos/files of any type
+- Uses cases:
+  - Streaming
+  - Backup/DR
+  - Archive
+
+### Azure file services (SMB file storage)
+
+- Easy way to create file shares
+- Supports SMB 2.1 (unsecured) and 3.0 (secured)
+- Mountable on Win/Linux/OS X
+- Azure file sync can be utilized to<br>sync onPrem file servers with Azure files
+
+### Azure table storage
+- NoSQL key/value store
+- Schemaless design
+- Structured/Unstructured data
+- Access using Odata protocol and LINQ queries<br>WCF data service .net libraries
+
+[Azure Table Storage Overview](https://docs.microsoft.com/en-us/azure/cosmos-db/table-storage-overview)
+
+
+![Table Storage Components](https://docs.microsoft.com/en-us/azure/includes/media/storage-table-concepts-include/table1.png "Table Storage Components")
+
+[Understanding Table Service Data Model](https://docs.microsoft.com/en-us/rest/api/storageservices/Understanding-the-Table-Service-Data-Model)
+
+### Azure Queue Storage
+
+- Provides reliable mechanism for storage and delivery of messages
+- Single queue message can be 64Kb and a queue can contain<br>millions of messages, up to the total capcity limit of a storage account
+
+[Azure Queue Storage Overview](https://docs.microsoft.com/en-us/azure/storage/queues/storage-queues-introduction)
+
+![Queue Storage concepts](https://docs.microsoft.com/en-us/azure/storage/queues/media/storage-queues-introduction/queue1.png "Queue Storage concepts")
 
 ## VM Disk Storage
 
+- Standard HDD
+  - backed by traditional HDDs
+  - most cost effective
+  - throughput based on VM
+  - IOPS based on VM
+- Standard SSD
+  - backed by SSD drives
+  - recommended for most workloads
+  - max through put 500MB/s per disk
+  - max IOPS 2000 IOPS per disk
+- Premium Storage
+  - backed by SSD drives
+  - higher performance, lower latency
+  - max through put 750MB/s per disk
+  - max IOPS 7500 IOPS per disk
+
+### Managed disks - Standard storage sizes
+| Type | S4 | S6 | S10 | S20 | S30 | S40 | S50|
+| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |----------- |----------- |
+|Disk Size | 32 | 64 | 128 | 512 | 1024 | 2048 | 4095|
+
+Note: IOPS and through put depend on the performance of the VM and are not provisioned.
+
+### Managed disks - Standard SSD storage sizes
+| Type | E4 | E6 | E10 | E15 | E20 | E30 | E40| E50|
+| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |----------- |----------- | ----------- |
+|Disk Size | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4095|
+|MAX IOPS | 120 | 240 | 500 | 500 | 500 | 500 | 500 | 500 |
+|MAX throughput | 25 MB/s | 50 MB/s | 60 MB/s | 60 MB/s | 60 MB/s | 60 MB/s | 60 MB/s | 60 MB/s|
+
+### Managed disks - Premium SSD storage sizes
+| Type | P4 | P6 | P10 | P15 | P20 | P30 | P40| P50|
+| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |----------- |----------- | ----------- |
+|Disk Size | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4095|
+|MAX IOPS | 120 | 240 | 500 | 1100 | 2300 | 5000 | 7500 | 7500 |
+|MAX throughput | 25 MB/s | 50 MB/s | 100 MB/s | 125 MB/s | 150 MB/s | 200 MB/s | 250 MB/s | 250 MB/s|
+
+### Ultra SSDs storage sizes
+| Type | P4 | P6 | P10 | P15 | P20 | P30 | P40| P50|
+| ----------- | ----------- | ----------- | ----------- | ----------- | ----------- |----------- |----------- | ----------- |
+|Disk Size | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512|
+|MAX IOPS | 1200 | 2400 | 4800 | 9600 | 19200 | 38400 | 7600 | 80000 |
+|MAX throughput | 300 MB/s | 600 MB/s | 1200 MB/s | 2000 MB/s | 2000 MB/s | 2000 MB/s | 2000 MB/s | 2000 MB/s|
+
+Note: 1,024 - 65,536 sizes also available increasing in incrememnts of 1 TiB<br>IOPs capped at 160,000 and throughput capped at 2,000<br>Read more about it as it is GA on August 2019
+
+### VM LIMITS
+> Make sure the VM you have can handle the bandwidth of the storage you selected (throughput and IOPS)
+
+### Managed vs. Un-Managed
+| Managed | Unmanaged |
+| ----------- | ----------- |
+| DIY option| Simplest option |
+| Management overhead<br>20,000 IOPS/storage account limit| Lower management overhead<br>as Azure manages the storage accounts|
+| Supports all replication modes<br>(LRS, ZRS, GRS, RA-GRS)| Only LRS replication<br>mode currently supported |
+
+### Replication Options
+**MUST READ**
+
+| Type | Description |
+| ----------- | ----------- |
+| Locally replicated storage<br>(LRS)| Replicated 3 times within a storage scale unit.<br>This is a collection of racks of storage nodes hosted in a datacenter<br>in the same region as your storage account |
+| Zone replicated storage<br>(ZRS)| Replicated 3 time across 1 or 2 datacenters in addition<br>to storing 3 replicas similar to LRS.<br>Data stored in ZRS is durable even in the event<br>that the primary datacenter is unavailable or unrecoverable|
+| Geographically replicated storage<br>(GRS)| Replicates your data to a second region<br>that is 100s miles away from your primary region.<br>Data is durable even in the event of complete region outage.|
+| Read-Only geographically<br>replicated storage (RA-GRS)| Same replication as GRS but also provides<br>read only access to the data in the other region. | 
+
+**Comparison**
+| Replication Strategy | LRS | ZRS | GRS | RA-GRS|
+| ----------- | ----------- | ----------- | ----------- | ----------- |
+| Data is replicated across<br>multiple datacenters? | No | Yes | Yes | Yes |
+| Data can be read from<br>a secondary location *and* the primary location? | No | No | No | Yes |
+| Number of copies of data<br>maintained on separate nodes | 3 | 3 | 6 | 6 |
+
+## Storage Account Overview
+
+### 3 types
+- General Purpose v1 (GPv1) - only allowed for blob storage
+- Blob account
+- General Purpose v2 (GPv2) - main type used when creating storage accounts in Azure<br>allows us to create everything (page/block/etc)
+
+### Block Blob vs. Page Blob
+| Block Blob Strategy | Page Blob |
+| ----------- | ----------- |
+| Ideal for storing text or binary files| Efficient for read/write ops |
+| Single block blob can contain 50,000 blocks<br>up to 100MB each<br>total size of **4.75TB**| Used by Azure VMs|
+| Append blobs are optimized for append ops (e.g. logging)| Up to **8TB** in size|
+
+### Storage tiers
+- Hot
+  - high storage costs
+  - lower access costs
+- Cold
+  - lower storage costs
+  - higher access costs
+  - Intended for data that will remain cool for 30days or more
+- Archive
+  - lowest storage costs
+  - highest retrieval costs
+  - when a blob is in storage<br>it is offline and cannot be read
+
+Implement lifecycle (same as AWS S3) concepts
+
+### Choosing between blobs, files, disks
+| Type | Benefits |
+| ----------- | ----------- |
+| Blobs | Access application data from anywhere<br>Large amount of objects to store (images/vids/etc) |
+| Files | Access across multiple machines<br>Jumpbox scenarios for shared dev purposes|
+| Disks | Do not need access outside of VM<br>Lift and shift of machines from onPrem<br>Disk expansion for app installations|
+
+
 # AZURE CORE SERVICES: OTHER SERVICES
 
+## IoT Services (Azure IoT)
+- Collection of Microsoft managed cloud services focused<br>on connecting, monitoring, and controlling IoT assets
+- IoT solutions are made up of 1 or more IoT devices<br>and 1 or more back end services running in the cloud
+
+## Examples
+- Water sensors for farming
+- Pressure sensors on a remote oil pump
+- Temp and humidity sensors in HVAC unit
+
+## IoT Services in Azure
+- IoT central: SaaS solution to connect and manage your devices
+- IoT hub: The service needed to facilitate messaging between your IoT apps and devices
+- IoT solution accelerators: Complete ready to deploy solutions that implement common IoT scenarios
+
+Note: be able to describe and understand IoT and where it fits in from a high level for the exam.
+
+## Big Data Solutions
+
+![Big Data Solutions](https://s3.amazonaws.com/algamthe.dev/images/BigDataSolutions.png "Big Data Solutions")
+
+For ingestion: there is Azure data factory
+
+Components
+- SQL data warehouse
+  - key component of a big data solution
+  - cloud based enterprise data warehouse (EDW) that<br>uses massive parallel processing (MPP)<br>to run complex queries across petabytes of data.
+  - Stores data in relational tables to reduce storage costs and improve performance
+- HDInsight
+  - Fully managed open source analytic service for enterprises
+  - Uses popular frameworks like Hadoop, Spark, Hive, etc
+  - Scenarios
+    - Batch processing (ETL)
+    - Data warehousing
+- Data lake analytics
+  - on-demand job service that simplifies big data
+  - pay only for the job when it is running
+  - write queries to transform data and extract insights
+
+**Which service do I use?**
+
+|If you want... | Use this|
+|---------------| --------|
+|A fully managed, elastic data warehouse with security at every level of scale at no extra cost | SQL Data Warehouse|
+| A fully managed, fast, easy and collaborative Apache® SparkTM based analytics platform optimized for Azure| Azure data bricks|
+| A fully managed cloud Hadoop and Spark service backed by 99.9% SLA for your enterprise | HDInsight |
+| A data integration service to orchestrate and automate data movement and transformation| Data Factory|
+| Open and elastic AI development spanning the cloud and the edge | Machine learning |
+| Real-time data stream processing from millions of IoT devices | Azure Stream Analytics |
+| A fully managed on-demand pay-per-job analytics service with enterprise-grade security, auditing, and support | Data Lake Analytics |
+| Enterprise grade analytics engine as a service | Azure Analysis Services |
+| A hyper-scale telemetry ingestion service that collects, transforms, and stores millions of events | Event Hubs |
+| Fast and highly scalable data exploration service | Azure Data Explorer|
+
+## Machine Learning
+
+- Machine learning is a data science technique that allows computers to use existing data to forecast future behaviors, outcomes, and trends. By using machine learning, computers learn without being explicitly programmed.
+- Azure Machine Learning service provides a cloud-based environment you can use to **prep data, train, test, deploy, manage, and track machine learning models**.
+- Automated ML and DevOps capabilities
+
+### Machine learning Studio
+- Collaborative, drag-and-drop visual workspace where you can build, test, and deploy machine learning solutions without needing to write code.
+- Uses prebuilt and preconfigured machine learning algorithms and data-handling modules as well as a proprietary compute platform
 
 # IDENTITY
 
+## Accounts and Subs Overview
+
+Azure Account Hierarchy
+
+Azure enterprise --> ea.azure.com<br>
+        | (1-Many)<br> 
+        V<br> 
+Departments<br>
+        | (1-Many)<br>
+        V<br>
+Accounts        --> account.azure.com<br>
+        | (1-Many)<br>
+        V<br>
+Subscriptions   --> portal.azure.com<br>
+        |<br>
+        V<br>
+Resource Groups<br>
+        |<br>
+        V<br>        
+Resources<br>    
+
+
+## Domain Services
+
+## Azure AD
+
+## RBAC
+
+## Azure Policy
+
+## Resource Locks
 
 # COMPLIANCE, SECURITY AND COST
+
+## Compliance and Security
+
+## Security Center
+
+## Support Plans
