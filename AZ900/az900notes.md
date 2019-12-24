@@ -958,35 +958,115 @@ Components
 
 ## Accounts and Subs Overview
 
-Azure Account Hierarchy
+### Azure Account Hierarchy
 
 Azure enterprise --> ea.azure.com<br>
-        | (1-Many)<br> 
-        V<br> 
-Departments<br>
-        | (1-Many)<br>
-        V<br>
-Accounts        --> account.azure.com<br>
-        | (1-Many)<br>
-        V<br>
+Accounts        --> account.azure.com<br>        
 Subscriptions   --> portal.azure.com<br>
-        |<br>
-        V<br>
-Resource Groups<br>
-        |<br>
-        V<br>        
-Resources<br>    
 
+![Azure Enterprise Scaffold](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/_images/reference/agreement.png "Azure Enterprise Scaffold")
+
+[Read more about it](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/reference/azure-scaffold)
+
+### Common patterns
+![Arranged by Function](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/_images/reference/functional.png "Arranged by Function")
+
+![Arranged by Business](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/_images/reference/business.png "Arranged by Business")
+
+![Arranged by Geographic](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/_images/reference/geographic.png "Arranged by Geographic")
+
+### Enterprise Agreement (EA) Breakdown
+
+| | Enterprise Admin | Department Admin | Account Owner | Service Admin |
+|-|-|-|-|-|
+Add other admins | Enterprise Admins,<br>Department Admins,<br>and Account Owners| Account Owners | Add Service Admins |No|
+Departments | Add/Edit Departments | Edit Department | Not available | Not available |
+Add or associate<br>accounts to the<br>enrollment| Yes |Yes –<br>to the department | No | No |
+Add Subscriptions | No –<br>but can add<br>themselves as AO| No | Yes | No |
+View usage<br>and charges data| Across all Accounts<br>and Subscriptions | Across Department | Across Account | No |
+View remaining<br>balances| Yes | No | No | No |
 
 ## Domain Services
 
+### Azure Active Directory (AAD)
+- first choice to use as an authentication method, as it is the way of the future
+- modern AD service built for the cloud
+- Often the same as O365 directory service
+- Can syn with onPrem directory service
+
+### Active Directory Domain Services (ADDS)
+- Windows server with active directory domain services installed
+- Legacy active directory since win2k
+- traditional kerberos and LDAP
+- deployed on Windows usually on VMs
+
+### Azure Active Directory Domain Services (AADDS)
+- managed version of the active directory domain services mentioned above
+- no need to patch and maintain machines (since it is managed by M$)
+- allows domain join/group policy/LDAP/kerberos/NTLM
+
 ## Azure AD
 
+[Azure AD overview](https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-whatis)
+
+### Overview
+![Azure AD Overview](ImagesS3/AzureADOverview.png "Azure AD Overview")
+
+### Features
+
+- Enterprise Identity solution: Create a single identity<br>for users and keep them in<br>sync across the enterprise
+- Single sign-on: Provides single sign-on access<br>to applications and infrastructure services.
+- Multifactor Authentication (MFA): Enhance security with<br>additional factors of authentication.
+- Self service: Empower users to complete password<br>resets themselves, as well as request<br>access to specific apps and services.
+
 ## RBAC
+Role 
+Based
+Access
+Control
+### Overview
+[Read more here](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview)
+
+- Create users,apps,groups
+- Assign them to objects in Azure with specific roles
+![RBAC Overview](https://docs.microsoft.com/en-us/azure/role-based-access-control/media/overview/rbac-least-privilege.png "RBAC Overview")
+
+- Owner: full access to all resources,<br>including right to delegate<br>access to others.
+- Contributor: can create and manage all<br>types of Azure resources,<br>but cannot grant access to them.
+- Reader: can view existing Azure resources, but cannot perform any other action on them.
+- Other roles
+
+[READ ABOUT OTHER ROLES HERE](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles)
+
+- Roles include various actions
+- Actions define what type of operations you can perform on a given resource type.
+  - Write enables you to perform PUT/POST/PATCH, and DELETE
+  - Read enables you to perform GET 
+- User powershell to get latest roles (Get-AzureRMRoleDefinition)
+
+User rights is the intersection of users and their roles.
+
+### RBAC custom roles
+- you can create one if none of the builtin roles work
+- each tenant can have up to 2000 roles
+- user actions and nonactions
+- Assignable scopes (subscription/resource group/individual resource)
+
+**OPEN ONE UP IN VISUAL CODE**
 
 ## Azure Policy
 
+- allows you to enforce governance
+- built in or custom
+- assigned to a sub or resource group
+- create --> assign 
+
 ## Resource Locks
+
+- mechanism to lock down resources to protect against accidental deletion
+- 2 options:
+  - CanNotDelete: Authorized users can read and modify but not delete
+  - ReadOnly: Authorized users can read the resource but not update or delete
 
 # COMPLIANCE, SECURITY AND COST
 
