@@ -6,6 +6,14 @@
    3. [Elasticity](#elasticity)
    4. [Scalability](#scalability)
 
+Online Resources<br>
+[Microsoft SelfPaced](https://docs.microsoft.com/en-us/learn/paths/azure-fundamentals/)
+
+Test banks
+- [ITExams link](https://www.itexams.com/exam/AZ-900)
+- [ExamTopics link](https://www.examtopics.com/exams/microsoft/az-900/)
+- [CertQueen link](https://freedumps.certqueen.com/new-cracked-microsoft-azure-fundamentals-az-900-exam-dumps/)
+
 # CLOUD CONCEPTS
 
 ## Cloud computing
@@ -264,6 +272,8 @@ Either used as a development framework (e.g. Azure App services, Pivotal Cloud F
 
 ### Fault and Update Domains
 
+Read more about FDs and UDs [here](https://blogs.msdn.microsoft.com/plankytronixx/2015/05/01/azure-exam-prep-fault-domains-and-update-domains/)
+
 #### Fault Domain (FD):
 - A rack that has its own power and networking connectivity
 - A single availability set can have up to 3 FDs
@@ -301,7 +311,7 @@ Azure services that support Availability Zones fall into two categories:
 Consist of the following:
 - Web apps
   - formarly known as "websites"
-  - build an host using various programming languages
+  - build and host using various programming languages
   - auto-scalable
   - highly available
   - DevOps features
@@ -370,7 +380,7 @@ Runs on dedicated azure VMs
 - Combine app services vs mass VM creation
 - Combine other services in the same resource group
 
-### App service environments (ASEs)
+### App Service Environments (ASEs)
 - Fully isolated environments
 - Can host mobile apps/web apps/API apps/azure functions
 - For high performance apps - high CPU and/or memory
@@ -388,6 +398,8 @@ Runs on dedicated azure VMs
 - A way to isolate apps from each other
 - Works on Linux and Windows
 - Allows separate apps to share the same OS kernel
+
+Containers provide a consistent, isolated execution environment for applications. They're similar to VMs except they don't require a guest operating system. Instead, the application and all its dependencies is packaged into a "container" and then a standard runtime environment is used to execute the app. This allows the container to start up in just a few seconds, because there's no OS to boot and initialize. You only need the app to launch.
 
 #### Reasons behind popularity
 - Monolithic app issues
@@ -517,6 +529,18 @@ Runs on dedicated azure VMs
 
 [More about ExpressRoute connectivity models](https://docs.microsoft.com/en-us/azure/expressroute/expressroute-connectivity-models)
 
+### What is an ExpressRoute Circuit?
+
+An ExpressRoute circuit represents a logical connection between your on-premises infrastructure and Microsoft cloud services through a connectivity provider. You can order multiple ExpressRoute circuits. Each circuit can be in the same or different regions, and can be connected to your premises through different connectivity providers.
+
+ExpressRoute circuits do not map to any physical entities. A circuit is uniquely identified by a standard GUID called as a **service key (s-key)**. The service key is the only piece of information exchanged between Microsoft, the connectivity provider, and you. The s-key is not a secret for security purposes. There is a 1:1 mapping between an ExpressRoute circuit and the s-key.
+
+New ExpressRoute circuits can include two independent peerings: Private peering and Microsoft peering. Whereas existing ExpressRoute circuits may contain three peerings: Azure Public, Azure Private and Microsoft. 
+Each peering is a pair of independent BGP sessions, each of them configured redundantly for high availability. 
+There is a 1:N (1 <= N <= 3) mapping between an ExpressRoute circuit and routing domains. An ExpressRoute circuit can have any one, two, or all three peerings enabled per ExpressRoute circuit.
+
+Each circuit has a fixed bandwidth (50 Mbps, 100 Mbps, 200 Mbps, 500 Mbps, 1 Gbps, 10 Gbps) and is mapped to a connectivity provider and a peering location. The bandwidth you select is shared across all circuit peerings
+
 #### Benefits of ExpressRoute
 - Layer 3 connectivity: between your onPrem and Microsoft through a connectivity provider.<br>Can be from any-to-any (IPVPN) network, point-to-point Ethernet connection,<br> or through a virtual cross-connection via an Ethernet exchange.
 - Connectivity in all regions in a given geopolitical region towards Microsoft cloud.
@@ -540,6 +564,13 @@ Make sure you have the following pieces of information
 | Unlimited **outbound** data transfer| Outbound data transfer charged at rate/Gb |
 | Higher monthly fee | Lower monthly fee |
 
+### ExpressRoute limits
+Q. Are there limits on the number of routes I can advertise?
+<br>A. Yes. We accept up to 4000 route prefixes for private peering and 200 for Microsoft peering. You can increase this to 10,000 routes for private peering if you enable the ExpressRoute premium feature.
+
+Q. Are there restrictions on IP ranges I can advertise over the BGP session?
+<br>A. We do not accept private prefixes (RFC1918) for the Microsoft peering BGP session. We accept any prefix size (up to /32) on both the Microsoft and the private peering.
+
 #### Express considerations
 - Understand the models
   - Differences between unlimited and metered data
@@ -556,10 +587,14 @@ Make sure you have the following pieces of information
 
 ## Azure Load Balancers
 
+More about Azure Load Balancer [here](https://docs.microsoft.com/en-us/azure/load-balancer/load-balancer-overview)
+
 ### Load balancer 
+
 Most common, works at the transport layer/layer 4.<br>Provides network level distribution to resources located in the same datacenter.
+
 - Layer 4 
-- Basic and Standard (preview) SKUs <-- review any SKUs
+- Basic and Standard SKUs <-- Microsoft recommends Standard
 - Service monitoring (allows to probe the health of VM behind it)
 - Automatic reconfiguration (i.e. when adding new webserver instances)
 - Hash based distribution. This is how it distributes its traffic.<br>Has a 5 tuple hash of the following
@@ -569,15 +604,24 @@ Most common, works at the transport layer/layer 4.<br>Provides network level dis
   - Destination Port
   - Protocol Type
   Also has session stickiness
-- Internal (e.g. infront of 2 DB instances), Public (e.g. infront of webservers) and multi-tier (mix of internal and public) options.
+- Internal (e.g. infront of 2 DB instances), Public (e.g. infront of webservers) and multi-tier (mix of internal and public) options. As well as cross-premises virtual network.
+- Pricing is based on
+  - Number of load-balancing and outbound rules
+  - Amount of data processed inbound and outbound independent of rules
+
 ### Application gateway
-workks at layer 7/app layer. Also acts as a reverse proxy
-- Layer 7 load balancer
+
+More about AppGateway [here](https://docs.microsoft.com/en-us/azure/application-gateway/overview)
+
+Works at layer 7/app layer. Also acts as a reverse proxy
+
+- Layer 7 load balancer (make routing decisions based on attributes of a HTTP request like URI path or host headers)
 - Cookie based session affinity
 - SSL offload
 - End2End SSL (terminate SSL at the app gateway, apply routing rules to the traffic, then re-encrypting it again)
 - WAF
 - URL based content routing
+- Autoscaling
 - Requires its own subnet before you deploy it
   
 **App gateway sizes (approximate)**
@@ -588,6 +632,8 @@ workks at layer 7/app layer. Also acts as a reverse proxy
 | 100K | 35Mbps | 100Mbps | 200Mbps |
   
 ### Traffic manager (global scale, globally available end points. works at the DNS level)
+
+Read more about Traffic manager [here](https://docs.microsoft.com/en-us/azure/traffic-manager/traffic-manager-overview)
 
 ### Comparison
 |Service | Azure load balancer | App gateway | Traffic manager |
@@ -644,6 +690,7 @@ A content delivery network (CDN) is a distributed network of servers that can ef
 - If the TTL for the file hasn't expired, the POP edge server returns the file directly from the cache. This process results in a faster, more responsive user experience.
 
 ### Limitations
+
 - The number of CDN profiles that can be created.
 - The number of endpoints that can be created in a CDN profile.
 - The number of custom domains that can be mapped to an endpoint.
@@ -653,6 +700,7 @@ A content delivery network (CDN) is a distributed network of servers that can ef
 ## Types of Data
 
 ### Structured Data
+
 - Adheres to a schema
 - All the data has the same field or properties
 - Stored in a database table with rows and columns
@@ -660,39 +708,55 @@ A content delivery network (CDN) is a distributed network of servers that can ef
 - Referred to as relational data
 
 ### Semi Structured Data
+
 - Doesn't fit into tables/rows/columns
 - Uses tags/keys to organize and provide a heirarchy
 - Referred to as NoSQL or non-relational data
 
 ### Unstructure Data
+
 - No designated structure
 - No restrictions on what type of data it can hold
 - Example, blob can hold PDF/JPEG/JSON/Videos/etc
 - Enterprises struggling to manage and gain insight<br>from this data
 
-
 ## Azure SQL
+
+Details [here](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-technical-overview)
+
 - Relational DB as a service
 - Latest stable version of MSSQL
-- Either create new or migrate using<br>
-Microsoft Data Migration Assistant
+- Either create new or migrate using<br>Microsoft Data Migration Assistant
 
 ### Features
+
 - Predictable performance: Measure in Database Throughput Units (DTU)
 - High compatibility: Supports existing SQL clients<br>via tubular database stream (TDS) endpoint
 - Simplified Management: Icludes SQL server specific Azure tools
-  
+
+**DTU Definition**:<br>
+A database transaction unit (DTU) represents a blended measure of CPU, memory, reads, and writes. The DTU-based purchasing model offers a set of preconfigured bundles of compute resources and included storage to drive different levels of application performance. If you prefer the simplicity of a preconfigured bundle and fixed payments each month, the DTU-based model might be more suitable for your needs.  
+More [here](https://docs.microsoft.com/en-us/azure/sql-database/sql-database-purchase-models#dtu-based-purchasing-model)
+### Deployment models
+
+- **Single database** represents a fully managed, isolated database. You might use this option if you have modern cloud applications and microservices that need a single reliable data source. A single database is similar to a contained database in Microsoft SQL Server Database Engine.
+- **Managed instance** is a fully managed instance of the Microsoft SQL Server Database Engine. It contains a set of databases that can be used together. Use this option for easy migration of on-premises SQL Server databases to the Azure cloud, and for applications that need to use the database features that SQL Server Database Engine provides.
+- **Elastic pool** is a collection of single databases with a shared set of resources, such as CPU or memory. Single databases can be moved into and out of an elastic pool.
+
 ### Database tiers
+
 |Basic | Standard | Premium |
 | ----------- | ----------- | ----------- |
 | Small DB with<br>single concurrent user| Medium sized DB that<br>must support multi-concurrent<br>connections | Large DB that must<br>a large number of concurrent<br>connections & operations |
 | - Small DBs<br>- Single active operation<br>- Dev/Test<br>- Small scale apps<br>- 5 DTU| - Good for cloud apps<br>- Multiple operations<br>- Workgroup or web apps<br>- 10-100 DTU | - High txn volumes<br>- Large number of users<br>- Multiple operations<br>- Mission critical apps<br>- 100-800 DTU |
 
 ### NEW - Managed Azure SQL Instances
+
 - Managed SQL servers
 - More compatible with legacy workloads
 
-### rd party DBs - Managed (MySQL/PostgreSQL)
+### Third party DBs - Managed (MySQL/PostgreSQL)
+
 - Managed DB options
   - built-in HA (no additional cost)
   - Predictable performance
@@ -702,7 +766,7 @@ Microsoft Data Migration Assistant
   - Auto backups with point in time restore (upto 35 days)
   - Enterprise grade security and compliance
 
-### rd party DBs - NON Managed (ClearDB/etc)
+### Third party DBs - NON Managed (ClearDB/etc)
 - Non managed options
   - Win Azure VM hosting MySQL
   - Linux Azure VM hosting MySQL
@@ -740,13 +804,46 @@ Automatically partitioned for
 **MUST READ MORE**
 
 ## Azure Storage
+
 ### Azure blob storage
+
 - Unstructured storage for storing objects
 - Store images/videos/files of any type
 - Uses cases:
-  - Streaming
-  - Backup/DR
-  - Archive
+  - Streaming video and audio.
+  - Storing data for backup and restore, disaster recovery, and archiving.
+  - Storing data for analysis by an on-premises or Azure-hosted service.
+  - Serving images or documents directly to a browser.
+  - Storing files for distributed access.-
+  - Writing to log files.
+
+#### Blob storage resources
+
+Blob storage offers three types of resources:
+
+- The storage account.
+- A container in the storage account
+- A blob in a container
+
+![Blob Types](ImagesS3/blobtypes.png "Blob Types")
+
+If a storage account is named *mystorageaccount*, then it will be
+
+`http://mystorageaccount.blob.core.windows.net`
+
+More info about blob storage [here](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction)
+
+More info about Azure storage account [here](https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview?toc=%2fazure%2fstorage%2fblobs%2ftoc.json)
+
+#### Types of Blobs
+
+Azure Storage supports three types of blobs:
+
+- Block blobs store text and binary data, up to about 4.7 TB. Block blobs are made up of blocks of data that can be managed individually.
+- Append blobs are made up of blocks like block blobs, but are optimized for append operations. Append blobs are ideal for scenarios such as logging data from virtual machines.
+- Page blobs store random access files up to 8 TB in size. Page blobs store virtual hard drive (VHD) files and serve as disks for Azure virtual machines. For more information about page blobs
+
+See more about [block, append, and page blobs](https://docs.microsoft.com/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs)
 
 ### Azure file services (SMB file storage)
 
@@ -762,7 +859,6 @@ Automatically partitioned for
 - Access using Odata protocol and LINQ queries<br>WCF data service .net libraries
 
 [Azure Table Storage Overview](https://docs.microsoft.com/en-us/azure/cosmos-db/table-storage-overview)
-
 
 ![Table Storage Components](https://docs.microsoft.com/en-us/azure/includes/media/storage-table-concepts-include/table1.png "Table Storage Components")
 
@@ -877,7 +973,7 @@ Note: 1,024 - 65,536 sizes also available increasing in incrememnts of 1 TiB<br>
 - Archive
   - lowest storage costs
   - highest retrieval costs
-  - when a blob is in storage<br>it is offline and cannot be read
+  - when a blob is in storage<br>it is offline and cannot be read<br>**MUST BE RE-HYDRATED**
 
 Implement lifecycle (same as AWS S3) concepts
 
@@ -1072,6 +1168,67 @@ User rights is the intersection of users and their roles.
 
 ## Compliance and Security
 
+- Security is a joint responsibility
+- Cloud computing has a number of benefits over onPrem
+- As you move from IaaS to PaaS to SaaS more can be offloaded to Microsoft's control
+
+![Shared Responsibility Model](ImagesS3/shared-responsibility.png "Shared Responsibility Model")
+[More on Shared Responsibility Model](https://docs.microsoft.com/en-us/azure/security/fundamentals/shared-responsibility)
+
+You are always responsible for
+- Data
+- Endpoints
+- Account
+- Access management
+
+[Shared Responsibility PDF](./SharedResponsibilityCloudComputing-2019-10-25.pdf "Shared Responsibility PDF")
+
+Look at Microsoft Trust Center [here](https://servicetrust.microsoft.com/)
+
+- In-depth information Access to FedRAMP, ISO, SOC audit reports,<br>data protection white papers, security assessment reports, and more
+- Centralized resources around security, compliance,<br>and privacy for all Microsoft Cloud services
+- Powerful assessment tools
+
+Look at Compliance Manager [here](https://docs.microsoft.com/en-us/microsoft-365/compliance/compliance-manager-overview)
+
+- manage compliance from a central location
+- proactive risk assesment
+- Insights and recommended actions
+- prepare compliance reports and audits
+
+Also look at the trust documents (there is also a GDPR mapping document as well) [here](https://servicetrust.microsoft.com/ViewPage/TrustDocuments)
+
+Blueprints are also available for security and compliance [here](https://servicetrust.microsoft.com/ViewPage/BlueprintOverview)
+
 ## Security Center
 
+- Centralized policy management
+- Continuous security assesment
+- Action-able recommendations
+- Advanced cloud defences
+- Prioritized alerts and incidents
+- Integrated security solutions
+
+Pricing tier
+| Tier | Features |
+|-|-|
+|Free<br>(Azure Resources Only)|- Security Assesment<br>- Security Recommendations<br>- Basic Security Policy<br>- Connected Partner Solutions|
+|Standard|- All features in free-tier<br>- Just in tim VM access<br>- Network thread detection<br>- VM threat detection|
+
 ## Support Plans
+
+|Tier/Area| Developer | Standard | Professional Direct | Premier |
+|-|-|-|-|-|
+|Scope| Trial and non-production environments | Production workload environments | Business-critical dependence |Substantial dependence across multiple products|
+|Technical Support| Business hours access to Support Engineers via email| 24x7 access to Support Engineers via email and phone| 24x7 access to Support Engineers via email and phone| 24x7 access to Support Engineers via email and phone|
+| Case Severity/Response Times | Minimal business impact<br>(Sev C): <8 business hours | Critical business impact<br>(Sev A): <1 hour| Critical business impact<br>(Sev A): <1 hour | Critical business impact<br>(Sev A): <1 hour <15 minutes<br>(with Azure Rapid Response or Azure Event Management)|
+| Architecture Support | General guidance | General guidance | Architectural guidance based<br>on best practice delivered by<br>ProDirect Delivery Manager | Customer specific architectural<br>support such as design reviews,<br>performance tuning,<br>configuration and more|
+| Operations Support | | | Onboarding services,<br>service reviews,<br>Azure Advisor consultations | Technical account manager-led<br>service reviews and reporting|
+| Training |||Azure Engineering-led<br>web seminars |Azure Engineering-led<br>web seminars, on-demand training|
+| Proactive Guidance | | |ProDirect Delivery Manager|Designated Technical<br>Account Manager |
+| Launch Support | | | |Azure Event Management<br>(available for additional fee)|
+
+
+
+
+
