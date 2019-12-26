@@ -1209,7 +1209,8 @@ Blueprints are also available for security and compliance [here](https://service
 - Prioritized alerts and incidents
 - Integrated security solutions
 
-Pricing tier
+Pricing tier<br>
+
 | Tier | Features |
 |-|-|
 |Free<br>(Azure Resources Only)|- Security Assesment<br>- Security Recommendations<br>- Basic Security Policy<br>- Connected Partner Solutions|
