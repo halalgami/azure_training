@@ -5,6 +5,44 @@
    2. [Core Cloud Services](#core-cloud-services)
    3. [Elasticity](#elasticity)
    4. [Scalability](#scalability)
+   5. [High Availability](#high-availability-ha-eamples)
+   6. [Cloud Economics](#cloud-economics)
+   7. [Cloud Deployment Models](#cloud-deployment-models)
+2. [Azure Core Services](#azure-core-services)
+   1. [Compute](#azure-core-services-compute)
+      1. [Azure VMs](#azure-vms)
+      2. [VM Availability](#vm-availability)
+      3. [App Services](#app-services)
+      4. [Containers](#containers)
+      5. [Serverless Computing](#serverless-computing)
+      6. [Compare Compute Options](#comparing-compute-options)
+   2. [Network](#azure-core-services-networking)
+      1. [Azure VNet](#azure-virtual-network)
+      2. [Hybrid Connectivity](#hybrid-connectivity-options)
+      3. [Load Balancers](#azure-load-balancers)
+      4. [CDN](#cdn)
+   3. [Data](#azure-core-services-data-and-storage-services)
+      1. [Types of Data](#types-of-data)
+      2. [Azure SQL](#azure-sql)
+      3. [Cosmos DB](#cosmos-db)
+      4. [Azure Storage](#azure-storage)
+      5. [VM Disk Storage](#vm-disk-storage)
+      6. [Storage Account](#storage-account-overview)
+   4. [Other Services](#azure-core-services-other-services)
+      1. [IoT Services](#iot-services-azure-iot)
+      2. [Big Data](#big-data-solutions)
+      3. [Machine Learning](#machine-learning)
+3. [Identity](#identity)
+   1. [Accounts and Subscriptions](#accounts-and-subs-overview)
+   2. [Domain Services](#domain-services)
+   3. [Azure AD](#azure-ad)
+   4. [RBAC](#rbac)
+   5. [Azure Policy](#azure-policy)
+   6. [Azure Resource Locks](#resource-locks)
+4. [Compliance, Security, and Cost](#compliance-security-and-cost)
+   1. [Compliance and Security](#compliance-and-security)
+   2. [Security Center](#security-center)
+   3. [Support Plans](#support-plans)
 
 Online Resources<br>
 [Microsoft SelfPaced](https://docs.microsoft.com/en-us/learn/paths/azure-fundamentals/)
@@ -931,7 +969,8 @@ Note: 1,024 - 65,536 sizes also available increasing in incrememnts of 1 TiB<br>
 | Management overhead<br>20,000 IOPS/storage account limit| Lower management overhead<br>as Azure manages the storage accounts|
 | Supports all replication modes<br>(LRS, ZRS, GRS, RA-GRS)| Only LRS replication<br>mode currently supported |
 
-### Replication Options
+### Replication Options<br>
+
 **MUST READ**
 
 | Type | Description |
@@ -941,7 +980,8 @@ Note: 1,024 - 65,536 sizes also available increasing in incrememnts of 1 TiB<br>
 | Geographically replicated storage<br>(GRS)| Replicates your data to a second region<br>that is 100s miles away from your primary region.<br>Data is durable even in the event of complete region outage.|
 | Read-Only geographically<br>replicated storage (RA-GRS)| Same replication as GRS but also provides<br>read only access to the data in the other region. | 
 
-**Comparison**
+**Comparison**<br>
+
 | Replication Strategy | LRS | ZRS | GRS | RA-GRS|
 | ----------- | ----------- | ----------- | ----------- | ----------- |
 | Data is replicated across<br>multiple datacenters? | No | Yes | Yes | Yes |
@@ -1057,7 +1097,7 @@ Components
 ### Azure Account Hierarchy
 
 Azure enterprise --> ea.azure.com<br>
-Accounts        --> account.azure.com<br>        
+Accounts        --> account.azure.com<br>
 Subscriptions   --> portal.azure.com<br>
 
 ![Azure Enterprise Scaffold](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/_images/reference/agreement.png "Azure Enterprise Scaffold")
@@ -1065,6 +1105,7 @@ Subscriptions   --> portal.azure.com<br>
 [Read more about it](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/reference/azure-scaffold)
 
 ### Common patterns
+
 ![Arranged by Function](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/_images/reference/functional.png "Arranged by Function")
 
 ![Arranged by Business](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/_images/reference/business.png "Arranged by Business")
