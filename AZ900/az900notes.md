@@ -925,7 +925,7 @@ Note: 1,024 - 65,536 sizes also available increasing in incrememnts of 1 TiB<br>
 > Make sure the VM you have can handle the bandwidth of the storage you selected (throughput and IOPS)
 
 ### Managed vs. Un-Managed
-| Managed | Unmanaged |
+| UN-managed | Managed |
 | ----------- | ----------- |
 | DIY option| Simplest option |
 | Management overhead<br>20,000 IOPS/storage account limit| Lower management overhead<br>as Azure manages the storage accounts|
