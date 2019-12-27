@@ -1139,6 +1139,8 @@ Components
   - pay only for the job when it is running
   - write queries to transform data and extract insights
 
+![Data Lake Concepts](ImagesS3/3-data_lake_store_concept.png "Data Lake Concepts")
+
 **Which service do I use?**
 
 |If you want... | Use this|
