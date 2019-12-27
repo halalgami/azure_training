@@ -131,6 +131,20 @@ Therefore, if we add the queue to our web app, the total composite SLA is:
 
 Notice we've improved our SLA behavior. However, there are trade-offs to using this approach: the application logic is more complicated, you are paying more to add the queue support, and there may be data-consistency issues you'll have to deal with due to retry behavio
 
+The composite SLA for a multiregion deployment is calculated as follows:
+
+> N is the composite SLA for the application deployed in one region.
+> R is the number of regions where the application is deployed.
+
+The expected chance that the application fails in all regions at the same time is ((1 − N) ^ R). For example, if the single-region SLA is 99.95%:
+
+> The combined SLA for two regions = (1 − (1 − 0.9995) ^ 2) = 99.999975%
+> The combined SLA for four regions = (1 − (1 − 0.9995) ^ 4) = 99.999999%
+
+Uptime is calculated as
+
+> Max available minutes - downtime in minutes / Max available minutes * 100
+
 ## Fault Tolerance:
 - Redundency is built into services so that if one component fails, another takes its place.
 - Reduce impact when disaster occurs.
@@ -562,7 +576,11 @@ Containers provide a consistent, isolated execution environment for applications
 
 ### Comparing compute options
 
+
 ![Cloud Compute options](ImagesS3/ComparisonCompute.png "Cloud Compute options")
+
+### Deciding which compute option
+![Cloud Compute options](ImagesS3/compute-decision-tree.svg "Cloud Compute options")
 
 # AZURE CORE SERVICES: NETWORKING
 
@@ -1234,6 +1252,8 @@ View remaining<br>balances| Yes | No | No | No |
 
 ### Overview
 ![Azure AD Overview](ImagesS3/AzureADOverview.png "Azure AD Overview")
+
+[Microsoft Cloud Identity for Enterprise Architects](./MSFT_cloud_architecture_identity.pdf "Microsoft Cloud Identity for Enterprise Architects")(pdf)
 
 ### Features
 
