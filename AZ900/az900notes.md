@@ -1471,6 +1471,45 @@ Also look at the trust documents (there is also a GDPR mapping document as well)
 
 Blueprints are also available for security and compliance [here](https://servicetrust.microsoft.com/ViewPage/BlueprintOverview)
 
+#### Azure Advisor
+
+Advisor is a personalized cloud consultant that helps you follow best practices to optimize your Azure deployments. It analyzes your resource configuration and usage telemetry and then recommends solutions that can help you improve the cost effectiveness, performance, high availability, and security of your Azure resources.
+
+You can
+
+- Get proactive, actionable, and personalized best practices recommendations.
+- Improve the performance, security, and high availability of your resources, as you identify opportunities to reduce your overall Azure spend.
+- Get recommendations with proposed actions inline.
+
+Recommendations are divided into
+
+- High availability
+- Security
+- Performance
+- Cost
+- Operational excellence
+
+Advisor provides recommendations for Application Gateway, App Services, availability sets, Azure Cache, Azure Data Factory, Azure Database for MySQL, Azure Database for PostgreSQL, Azure Database for MariaDB, Azure ExpressRoute, Azure Cosmos DB, Azure public IP addresses, SQL Data Warehouse, SQL servers, storage accounts, Traffic Manager profiles, and virtual machines.
+
+More info [here](https://docs.microsoft.com/en-us/azure/advisor/advisor-overview)
+
+#### Azure Advanced Threat Protection (ATP)
+
+Azure Advanced Threat Protection (ATP) is a cloud-based security solution that leverages your on-premises Active Directory signals to identify, detect, and investigate advanced threats, compromised identities, and malicious insider actions directed at your organization.
+
+Allows SecOps to
+
+- Monitor users, entity behavior, and activities with learning-based analytics
+- Protect user identities and credentials stored in Active Directory
+- Identify and investigate suspicious user activities and advanced attacks throughout the kill chain. These include:
+  - Reconnaissance
+  - Compromised credentials
+  - Lateral movements
+  - Domain dominance
+- Provide clear incident information on a simple timeline for fast triage
+
+More info [here](https://docs.microsoft.com/en-us/azure-advanced-threat-protection/what-is-atp)
+
 ## Security Center
 
 Details [here](https://docs.microsoft.com/en-us/azure/security-center/security-center-intro)
