@@ -84,21 +84,52 @@ Either static or elastic scaling (e.g. seasonal demand for a retail web site)
 
 
 ## Defitnion of SLA
-: Service Level Agreement (SLA) is an agreement with business and application teams
+Service Level Agreement (SLA) is an agreement with business and application teams
 on the expected performance and availability of a specific service
 
-## General SLA practices:
+SLAs for Azure products and services have 3 characteristics
+- Performance targets (specific to each Azure product/service)
+- Uptime and connectivity guarantees
+- Service credits (e.g. Microsoft might credit customers back for underperforming Azure products/services)
+
+### General SLA practices:
 - Define SLA for each workload
 - Depdendency mapping (include internal and external dependencies)
 - Identify single points of failure (e.g. app needs 99.99% but is depdending on a service with 99.9%)
 
-## Key terms:
+### Key terms:
 | Term | Definition |
 | ----------- | ----------- |
 | Mean Time To Recovery (MTTR) | Average time to recover from an outage |
 | Mean Time Between Failures (MTBF) | Average time between outages |
 | Recovery Point Objective (RPO) | Interval of time in which data could be lost during a recovery (e.g. 5min RPO means up to 5 minutes of data are lost.) |
 | Recovery Time Objective (RTO) | Time requirement for recovery to be completed in before there is a business impact. |
+
+### Calculating downtime
+
+> E.g. we have a web app that is connected to a DB.
+><br>Below are the SLA for each component
+><br>web app with 99.95% SLA
+><br>SQL DB with 99.99% SLA
+
+Composite SLA is<br>
+> 99.95 percent × 99.99 percent = 99.94 percent
+
+This means the combined probability of failure is higher than the individual SLA values. This isn't surprising, because an application that relies on multiple services has more potential failure points.
+
+The above scenario can be enhanced with the below design<br>
+![Composite SLA enhanced](ImagesS3/7-sla-compositesla2.png "Composite SLA enhanced")
+
+With this design, the application is still available even if it can't connect to the database. However, it fails if both the database and the queue fail simultaneously.
+
+If the expected percentage of time for a simultaneous failure is 0.0001 × 0.001, the composite SLA for this combined path of a database or queue would be:<br>
+> 1.0 − (0.0001 × 0.001) = 99.99999 percent
+
+Therefore, if we add the queue to our web app, the total composite SLA is:
+
+> 99.95 percent × 99.99999 percent = ~99.95 percent
+
+Notice we've improved our SLA behavior. However, there are trade-offs to using this approach: the application logic is more complicated, you are paying more to add the queue support, and there may be data-consistency issues you'll have to deal with due to retry behavio
 
 ## Fault Tolerance:
 - Redundency is built into services so that if one component fails, another takes its place.
@@ -133,7 +164,7 @@ Revolves around what is managed:
 
 ### Pizza As A Service Example
 
-![Pizza As A Service](https://s3.amazonaws.com/algamthe.dev/images/PizzaAsService.jpeg "Pizza As A Service")
+![Pizza As A Service](ImagesS3/PizzaAsService.jpeg "Pizza As A Service")
 
 - Traditional (we manage everything)
 - Infrastructure As A Service (IaaS) (we manage 1-5, vendor manages 6-9). 
@@ -144,7 +175,7 @@ Either used as a development framework (e.g. Azure App services, Pivotal Cloud F
 (e.g. Office365, Salesforce, etc)
 
 ### IT Cloud Services
-![IT Cloud Service](https://s3.amazonaws.com/algamthe.dev/images/CloudServiceModels.png "IT Cloud Service")
+![IT Cloud Service](ImagesS3/CloudServiceModels.png "IT Cloud Service")
 
 
 ## Cloud Economics
@@ -213,7 +244,7 @@ Either used as a development framework (e.g. Azure App services, Pivotal Cloud F
 | Complete control over all resources | Large upfront costs |
 | Complete security control | High skillset required |
 | May be able to meet strict compliance requirements<br>that cannot be met by the public cloud | Owning the equipment adds a lag into provisioning process |
-| *Minimal* tech knowledge needed to get *started* | Datacenter management |
+| | Datacenter management |
 
 ### Hybrid Cloud
 - Combines public and private clouds
@@ -222,21 +253,21 @@ Either used as a development framework (e.g. Azure App services, Pivotal Cloud F
 
 | Advantages | Disadvantages |
 | ----------- | ----------- |
-| Flexibility | Complicated to maintain and setup<br>(need to factor in specific cloud knowledge vs. onPrem<br>and also when going with multiple cloud providers) |
+| Flexibility | Complicated to maintain and setup (need to factor in specific cloud knowledge vs. onPrem<br>and also when going with multiple cloud providers) |
 | Support for legacy apps while enabling modern apps to move  | Can be more expensive than simply selecting one model |
+| Take advantage of economies of scale from public cloud providers when it's cheaper<br> and augment with your own equipment when it's not cheaper |  |
 | Continue to use your own equipment and investments |  |
-|  |  |
 
 # AZURE CORE SERVICES
 
 ## Azure Cloud Services Overview
 
-![Azure Cloud Services Overview](https://s3.amazonaws.com/algamthe.dev/images/AzureServicesOverview.png "Azure Cloud Services Overview")
+![Azure Cloud Services Overview](ImagesS3/AzureServicesOverview.png "Azure Cloud Services Overview")
 
 ## Azure Portal Overview Demo
 
-- Can create and share Dashboards
-- There is a CLI option to run Powershell commands right in the portal
+- Can create and share Dashboards (basically JSON files, can embed queries into them as well)
+- Cloudshell allows gives the user a CLI option right in the browser. Can switch between Bash or Powershell, with a storage account to store all user scripts data to be consistent.
 - Subscription is the billing group this resource will be part of
 - Resource group is a logical grouping of resources
 - There is a download template option available after creating a VM
@@ -244,20 +275,33 @@ Either used as a development framework (e.g. Azure App services, Pivotal Cloud F
 ## Resource Group Demo
 
 - there is an activity log that logs everything done with a resource group
-- IAM controls can be added directly to a resource group
+- IAM/RBAC controls can be added directly to a resource group
 - Resource groups can be tagged (stuff like MaintenanceWindow, CostCentre, etc)
 - there are events that be added to a resource group, more related to logic apps and the like.
 - costs can be seen under a given group's resource costs option
 - Deployment can display all deployments done (either via portal or ARM templates) - pay attention to this
 - resource groups can have policies added to them (force encryption, restrict VM types within a resource group) - pay attention to this
 - there is an option to download the deployment scripts via the Automation Scripts option.
+- once a resource group is deleted, all resources contained within are also deleted.
+
+### Organizing principles
+
+You can use a resource group to group by:
+- By type (e.g. all VNets, all VMs, all DBs, etc)
+- By environment (e.g. prod, qa, dev)
+- By department (finance, it, hr)
+
+You can use resource groups depdending on:
+- Who needs to access them (e.g. DBAs, sysadmins, AppDevs)
+- What lifecycle do the resources inside need
+- For billing purposes
 
 # AZURE CORE SERVICES: COMPUTE
 
 ## Azure VMs
 ### What is a VM:
 
-![What is a VM](https://s3.amazonaws.com/algamthe.dev/images/WhatIsAVM.png "What is a VM")
+![What is a VM](ImagesS3/WhatIsAVM.png "What is a VM")
 
 ### VM Types:
 
@@ -323,12 +367,12 @@ Read more about FDs and UDs [here](https://blogs.msdn.microsoft.com/plankytronix
 - Up to 20 UDs can be allowed
 - Order cannot be controlled
 
-![Fault and Update Domains](https://s3.amazonaws.com/algamthe.dev/images/FaultUpdateDomains.png "Fault and Update Domains")
+![Fault and Update Domains](ImagesS3/FaultUpdateDomains.png "Fault and Update Domains")
 
 ### Planning for availability
 - Seperate the VMs across sets
 
-![Planning for availability](https://s3.amazonaws.com/algamthe.dev/images/PlanningAvailability.png "Planning for availability")
+![Planning for availability](ImagesS3/PlanningAvailability.png "Planning for availability")
 
 ## Availability Zones
 
@@ -344,6 +388,36 @@ Azure services that support Availability Zones fall into two categories:
 
 - Zonal services – you pin the resource to a specific zone (for example, virtual machines, managed disks, Standard IP addresses), or
 - Zone-redundant services – platform replicates automatically across zones (for example, zone-redundant storage, SQL Database).
+
+### Region Pairs
+
+Each Azure region is always paired with another region within the same geography (such as US, Europe, or Asia) at least 300 miles away. This approach allows for the replication of resources (such as virtual machine storage) across a geography that helps reduce the likelihood of interruptions due to events such as natural disasters, civil unrest, power outages, or physical network outages affecting both regions at once. If a region in a pair was affected by a natural disaster, for instance, services would automatically fail over to other region in its region pair.
+
+![Region Pair Example](ImagesS3/5-region-pairs.png "Region Pair Example")
+
+Advantages inlcude<br>
+
+- If there's an extensive Azure outage, one region out of every pair is prioritized to make sure at least one is restored as quick as possible for applications hosted in that region pair.
+- Planned Azure updates are rolled out to paired regions one region at a time to minimize downtime and risk of application outage.
+- Data continues to reside within the same geography as its pair (except for Brazil South) for tax and law enforcement jurisdiction purposes.
+
+### Virtual Machine Scale Set
+Azure Virtual Machine Scale Sets let you create and manage a group of identical, load balanced VMs. Imagine you're running a website that enables scientists to upload astronomy images that need to be processed. If you duplicated the VM, you'd normally need to configure an additional service to route requests between multiple instances of the website. Virtual Machine Scale Sets could do that work for you.
+
+Scale sets allow you to centrally manage, configure, and update a large number of VMs in minutes to provide highly available applications. The number of VM instances can automatically increase or decrease in response to demand or a defined schedule. With Virtual Machine Scale Sets, you can build large-scale services for areas such as compute, big data, and container workloads.
+
+### Azure Batch
+
+Azure Batch enables large-scale job scheduling and compute management with the ability to scale to tens, hundreds, or thousands of VMs.
+
+When you're ready to run a job, Batch does the following:
+
+- Starts a pool of compute VMs for you
+- Installs applications and staging data
+- Runs jobs with as many tasks as you have
+- Identifies failures
+-  Requeues work
+-  Scales down the pool as work completes
 
 ## App Services
 Consist of the following:
@@ -488,18 +562,18 @@ Containers provide a consistent, isolated execution environment for applications
 
 ### Comparing compute options
 
-![Cloud Compute options](https://s3.amazonaws.com/algamthe.dev/images/ComparisonCompute.png "Cloud Compute options")
+![Cloud Compute options](ImagesS3/ComparisonCompute.png "Cloud Compute options")
 
 # AZURE CORE SERVICES: NETWORKING
 
-![Networking Overview](https://s3.amazonaws.com/algamthe.dev/images/NetOverview.png "Networking Overview")
+![Networking Overview](ImagesS3/NetOverview.png "Networking Overview")
 
 [Read more about VNets](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview)
 
 
 ## Azure Virtual Network
 
-![Azure Virtual Network](https://s3.amazonaws.com/algamthe.dev/images/VNetExample.png "Azure Virtual Network")
+![Azure Virtual Network](ImagesS3/VNetExample.png "Azure Virtual Network")
 
 **Capabilities**
 - Isolation
@@ -522,14 +596,14 @@ Containers provide a consistent, isolated execution environment for applications
 ## Hybrid connectivity options
 
 ### Site-to-Site (S2S)
-![Site-to-Site](https://s3.amazonaws.com/algamthe.dev/images/Site2SiteOverview.png "Site-to-Site")
+![Site-to-Site](ImagesS3/Site2SiteOverview.png "Site-to-Site")
 - S2S VPN gateway connection is a connection over IPSec/IKE (IKEv1 or v2) VPN tunnel
 - Requires a VPN device in an enterprise datacenter that has a public IP address assigned to it
 - Must **not** be located behind a NAT
 - S2S connections can be used for cross-premises and hybrid configuratoins  
 
 ### Point-to-Site (P2P)
-![Point-to-Site](https://s3.amazonaws.com/algamthe.dev/images/Point2Site.png "Point-to-Site")
+![Point-to-Site](ImagesS3/Point2Site.png "Point-to-Site")
 - Secure connection from an individual computer. Greate for remote workers.
 - No need for VPN device or public IP. Connect whereever user has Internet connection
 - Supports OSes: Win 7,8,8.1 (32/64bit),10. Win Server 2008 R2,2012,2012 R2 64 bit
@@ -692,7 +766,7 @@ A content delivery network (CDN) is a distributed network of servers that can ef
 - Standard Verizon
 - Premium Verizon
 
-![CDN Offerings](https://s3.amazonaws.com/algamthe.dev/images/AzureCDNOfferings.png "CDN Offerings")
+![CDN Offerings](ImagesS3/AzureCDNOfferings.png "CDN Offerings")
 
 ### Features
 - Dynamic site acceleration
@@ -1045,7 +1119,7 @@ Note: be able to describe and understand IoT and where it fits in from a high le
 
 ## Big Data Solutions
 
-![Big Data Solutions](https://s3.amazonaws.com/algamthe.dev/images/BigDataSolutions.png "Big Data Solutions")
+![Big Data Solutions](ImagesS3/BigDataSolutions.png "Big Data Solutions")
 
 For ingestion: there is Azure data factory
 
@@ -1092,6 +1166,10 @@ Components
 
 # IDENTITY
 
+- Authentication is the process of establishing the identity of a person or service looking to access a resource. It involves the act of challenging a party for legitimate credentials, and provides the basis for creating a security principal for identity and access control use. It establishes if they are who they say they are.
+
+- Authorization is the process of establishing what level of access an authenticated person or service has. It specifies what data they're allowed to access and what they can do with it.
+
 ## Accounts and Subs Overview
 
 ### Azure Account Hierarchy
@@ -1103,6 +1181,8 @@ Subscriptions   --> portal.azure.com<br>
 ![Azure Enterprise Scaffold](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/_images/reference/agreement.png "Azure Enterprise Scaffold")
 
 [Read more about it](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/reference/azure-scaffold)
+
+Access management occurs at the Azure subscription level
 
 ### Common patterns
 
@@ -1122,6 +1202,10 @@ Add or associate<br>accounts to the<br>enrollment| Yes |Yes –<br>to the depart
 Add Subscriptions | No –<br>but can add<br>themselves as AO| No | Yes | No |
 View usage<br>and charges data| Across all Accounts<br>and Subscriptions | Across Department | Across Account | No |
 View remaining<br>balances| Yes | No | No | No |
+
+### Billing
+
+![Azure Billing](ImagesS3/4-billing-structure-overview.png "Azure Billing")
 
 ## Domain Services
 
@@ -1155,6 +1239,9 @@ View remaining<br>balances| Yes | No | No | No |
 - Single sign-on: Provides single sign-on access<br>to applications and infrastructure services.
 - Multifactor Authentication (MFA): Enhance security with<br>additional factors of authentication.
 - Self service: Empower users to complete password<br>resets themselves, as well as request<br>access to specific apps and services.
+- Application management: You can manage your cloud and on-premises apps using Azure AD Application Proxy, SSO, the My apps portal (also referred to as Access panel), and SaaS apps.
+- Device Management. Manage how your cloud or on-premises devices access your corporate data.
+- Business to business (B2B) identity services. Manage your guest users and external partners while maintaining control over your own corporate data Business-to-Customer (B2C) identity services. Customize and control how users sign up, sign in, and manage their profiles when using your apps with services.
 
 ## RBAC
 Role 
@@ -1191,20 +1278,91 @@ User rights is the intersection of users and their roles.
 
 **OPEN ONE UP IN VISUAL CODE**
 
+### Best practices for RBAC
+
+Here are some best practices you should use when setting up resources.
+
+- Segregate duties within your team and grant only the amount of access to users that they need to perform their jobs. Instead of giving everybody unrestricted permissions in your Azure subscription or resources, allow only specific actions at a particular scope.
+- When planning your access control strategy, grant users the lowest privilege level that they need to do their work.
+- Use Resource Locks to ensure critical resources aren't modified or deleted (more on that next!)
+
 ## Azure Policy
+
+[Azure Policy overview](https://docs.microsoft.com/en-us/azure/governance/policy/overview)
+
+An Azure service you use to create, assign and, manage policies. These policies enforce different rules and effects over your resources so that those resources stay compliant with your corporate standards and service level agreements. Azure Policy meets this need by evaluating your resources for noncompliance with assigned policies. For example, you might have a policy that allows virtual machines of only a certain size in your environment. After this policy is implemented, new and existing resources are evaluated for compliance. With the right type of policy, existing resources can be brought into compliance.
 
 - allows you to enforce governance
 - built in or custom
-- assigned to a sub or resource group
-- create --> assign 
+- assigned to a sub or resource group<br>(all child resources get to inherit it as well)
+- Policy flow is: create --> assign
+- Organize them through the use of *initiaves*: a set or group of policy definitions to help track your compliance state for a larger goal
+
+### Azure Policy vs. RBAC
+- **RBAC focuses on user actions at different scopes**. You might be added to the contributor role for a resource group, allowing you to make changes to anything in that resource group. 
+- **Azure Policy focuses on resource properties during deployment and for already-existing resources**. Azure Policy controls properties such as the types or locations of resources
+
+> **Unlike RBAC, Azure Policy is a default-allow-and-explicit-deny system.**
+
+
+### Max count of Azure policy objects
+
+|Where | What |Maximum Count|
+|--|--|--|
+|Scope | Policy definitions | 500|
+|Scope | Initiative definitions |100|
+|Tenant | Initiative definitions |1,000|
+|Scope | Policy or initiative assignments |100|
+|Policy definition | Parameters | 20|
+|Initiative definition |Policies |100|
+|Initiative definition |Parameters |100|
+|Policy or initiative assignments |Exclusions (notScopes) |400|
+|Policy rule |Nested conditionals |512|
+
+### Recommendations
+
+Here are a few pointers and tips to keep in mind:
+
+- Start with an **audit effect** instead of a **deny effect** to track impact of your policy definition on the resources in your environment. If you have scripts already in place to autoscale your applications, setting a deny effect may hinder such automation tasks already in place.
+
+- Consider organizational hierarchies when creating definitions and assignments. We recommend creating definitions at higher levels such as the management group or subscription level. Then, create the assignment at the next child level. If you create a definition at a management group, the assignment can be scoped down to a subscription or resource group within that management group.
+
+- We recommend creating and assigning initiative definitions even for a single policy definition. For example, you have policy definition policyDefA and create it under initiative definition initiativeDefC. If you create another policy definition later for policyDefB with goals similar to policyDefA, you can add it under initiativeDefC and track them together.
+
+- Once you've created an initiative assignment, policy definitions added to the initiative also become part of that initiatives assignments.
+
+- When an initiative assignment is evaluated, all policies within the initiative are also evaluated. If you need to evaluate a policy individually, it's better to not include it in an initiative.
 
 ## Resource Locks
+
+More about resource locks [here](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/lock-resources)
 
 - mechanism to lock down resources to protect against accidental deletion
 - 2 options:
   - CanNotDelete: Authorized users can read and modify but not delete
   - ReadOnly: Authorized users can read the resource but not update or delete
 
+Some Azure services like Azure databricks, use [managed applications](https://docs.microsoft.com/en-us/azure/managed-applications/overview) to implement the service.<br>
+In these cases, there will be two resource groups.<br>
+
+- One resource group containing an overview of the service and **isn't locked**
+- Another resource group containing the infrastructure of the service and **is locked**
+
+### Who can create or delete locks
+
+To create or delete management locks, you must have access to<br>
+`Microsoft.Authorization/*` or `Microsoft.Authorization/locks/*` actions.<br>Of the built-in roles, only Owner and User Access Administrator are granted those actions.
+
+## Azure Blueprints
+
+Azure Blueprints is a declarative way to orchestrate the deployment of various resource templates and other artifacts, such as:
+
+- Role assignments
+- Policy assignments
+- Azure Resource Manager templates
+- Resource groups
+
+Where Resource Manager templates exist locally on in source control, blueprints are saved in Azure and linked to what was actually deployed.
 # COMPLIANCE, SECURITY AND COST
 
 ## Compliance and Security
@@ -1224,7 +1382,57 @@ You are always responsible for
 
 [Shared Responsibility PDF](./SharedResponsibilityCloudComputing-2019-10-25.pdf "Shared Responsibility PDF")
 
-Look at Microsoft Trust Center [here](https://servicetrust.microsoft.com/)
+Based on the above diagram and PDF, take note of the following:<br>
+
+- For on-premises solutions, the customer is both accountable and responsible for all aspects of security and operations.  
+- For IaaS solutions, the elements such as buildings, servers, networking hardware, and the hypervisor should be managed by the platform vendor. The customer is responsible or has a shared responsibility for securing and managing the operating system, network configuration, applications, identity, clients, and data.
+- PaaS solutions build on IaaS deployments, and the provider is additionally responsible to manage and secure the network controls. The customer is still responsible or has a shared responsibility for securing and managing applications, identity, clients, and data.  
+- For SaaS solutions, a vendor provides the application and abstracts customers from the underlying components. Nonetheless, the customer continues to be accountable; they must ensure that data is classified correctly, and they share a responsibility to manage their users and end-point devices.
+
+#### Data Classification
+Details [here](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/govern/policy-compliance/data-classification)
+
+Data classification allows you to determine and assign value to your organization's data, and is a common starting point for governance. The data classification process categorizes data by sensitivity and business impact in order to identify risks. When data is classified, you can manage it in ways that protect sensitive or important data from theft or loss.
+
+Microsoft uses the following classifications
+- Non-business: Data from your personal life that doesn't belong to Microsoft.
+- Public: Business data that is freely available and approved for public consumption.
+- General: Business data that isn't meant for a public audience.
+- Confidential: Business data that can cause harm to Microsoft if overshared.
+- Highly confidential: Business data that would cause extensive harm to Microsoft if overshared.
+
+Resource tags can be used to further help with applying data classification as part of an overall security posture.
+
+#### Azure Information Protection (AIP)
+Details [here](https://docs.microsoft.com/en-us/azure/information-protection/what-is-information-protection)
+
+Azure Information Protection (sometimes referred to as AIP) is a cloud-based solution that helps an organization to classify and optionally, protect its documents and emails by applying labels. Labels can be applied automatically by administrators who define rules and conditions, manually by users, or a combination where users are given recommendations.
+
+![AIP](ImagesS3/info-protect-recommend-calloutsv2.png "AIP")
+<br>*AIP in action*
+
+#### Azure Rights Management (Azure RMS)
+
+More on RMS [here](https://docs.microsoft.com/en-us/azure/information-protection/what-is-azure-rms)
+
+This cloud-based protection service uses encryption, identity, and authorization policies to help secure your files and email, and it works across multiple devices—phones, tablets, and PCs. Information can be protected both within your organization and outside your organization because that protection remains with the data, even when it leaves your organization’s boundaries.
+
+![Azure RMS](ImagesS3/azrms_elements.png "Azure RMS")
+
+Supports following security, compliance, and regulatory requirements:
+- Uses and supports FIPS 140-2. More info [here](https://docs.microsoft.com/en-us/azure/information-protection/how-does-it-work#cryptographic-controls-used-by-azure-rms-algorithms-and-key-lengths)
+- Support for nCipher nShiel hardware security module (HSM). MS uses separate security worlds for each datacenter<br>so a key can only be used in your region.
+- Certified for
+  - ISO/IEC 27001:2013 (./includes ISO/IEC 27018)
+  - SOC 2 SSAE 16/ISAE 3402 attestations
+  - HIPAA BAA
+  - EU Model Clause
+  - FedRAMP as part of Azure Active Directory in Office 365 certification, issued FedRAMP Agency Authority to Operate by HHS
+  - PCI DSS Level 1
+
+#### Microsoft Trust Center
+
+[MS Trust Center link](https://servicetrust.microsoft.com/)
 
 - In-depth information Access to FedRAMP, ISO, SOC audit reports,<br>data protection white papers, security assessment reports, and more
 - Centralized resources around security, compliance,<br>and privacy for all Microsoft Cloud services
@@ -1243,6 +1451,8 @@ Blueprints are also available for security and compliance [here](https://service
 
 ## Security Center
 
+Details [here](https://docs.microsoft.com/en-us/azure/security-center/security-center-intro)
+
 - Centralized policy management
 - Continuous security assesment
 - Action-able recommendations
@@ -1255,22 +1465,20 @@ Pricing tier<br>
 | Tier | Features |
 |-|-|
 |Free<br>(Azure Resources Only)|- Security Assesment<br>- Security Recommendations<br>- Basic Security Policy<br>- Connected Partner Solutions|
-|Standard|- All features in free-tier<br>- Just in tim VM access<br>- Network thread detection<br>- VM threat detection|
+|Standard|- All features in free-tier<br>- Just in time VM access<br>- Adaptive application controls and network hardening<br>- Regulatory compliance dashboard and reports<br>- Threat detection for both Azure and non Azure VMs(including server EDR)<br>- Threat protection for PaaS|
 
 ## Support Plans
+
+Reference [here](https://azure.microsoft.com/en-us/support/plans/)
 
 |Tier/Area| Developer | Standard | Professional Direct | Premier |
 |-|-|-|-|-|
 |Scope| Trial and non-production environments | Production workload environments | Business-critical dependence |Substantial dependence across multiple products|
 |Technical Support| Business hours access to Support Engineers via email| 24x7 access to Support Engineers via email and phone| 24x7 access to Support Engineers via email and phone| 24x7 access to Support Engineers via email and phone|
-| Case Severity/Response Times | Minimal business impact<br>(Sev C): <8 business hours | Critical business impact<br>(Sev A): <1 hour| Critical business impact<br>(Sev A): <1 hour | Critical business impact<br>(Sev A): <1 hour <15 minutes<br>(with Azure Rapid Response or Azure Event Management)|
+| Case Severity/Response Times | Minimal business impact<br>(Sev C): <8 business hours | Minimal business impact<br>(Sev C):<8 business hours<br>Moderate business impact<br>(Sev B):<4 hours<br>Critical business impact<br>(Sev A): <1 hour| Minimal business impact<br>(Sev C):<4 business hours<br>Moderate business impact<br>(Sev B):<2 hours<br>Critical business impact<br>(Sev A): <1 hour | Minimal business impact<br>(Sev C): <4 business hours<br>Moderate business impact<br>(Sev B): <2 hours<br>Critical business impact<br>(Sev A): <1 hour<br><15 minutes<br>(with Azure Rapid Response or Azure Event Management)|
 | Architecture Support | General guidance | General guidance | Architectural guidance based<br>on best practice delivered by<br>ProDirect Delivery Manager | Customer specific architectural<br>support such as design reviews,<br>performance tuning,<br>configuration and more|
 | Operations Support | | | Onboarding services,<br>service reviews,<br>Azure Advisor consultations | Technical account manager-led<br>service reviews and reporting|
 | Training |||Azure Engineering-led<br>web seminars |Azure Engineering-led<br>web seminars, on-demand training|
 | Proactive Guidance | | |ProDirect Delivery Manager|Designated Technical<br>Account Manager |
 | Launch Support | | | |Azure Event Management<br>(available for additional fee)|
-
-
-
-
-
+|Pricing | $29/mo | $100/mo | $1,000/mo | Contact Microsoft|
